@@ -40,18 +40,24 @@ class PostWorkout extends React.Component<{}, {success:boolean, submitted: boole
     handleSubmit(e: React.MouseEvent<HTMLButtonElement>){
         e.preventDefault();
         this.setState({submitted:true});
+        if(this.state.workoutName===""){ 
+            this.setState({blankWName:true});
+            return;
+        }
         for(let i=0; i<this.state.exercises.length; i++){
             let exer=this.state.exercises[i];
-
 
             axios.post('https://workout-buddy-server2020.herokuapp.com/workouts/add', {
                 workoutName:this.state.workoutName,
                 name:exer.name,
                 length:parseInt(exer.lengthM)*60+parseInt(exer.lengthS),
-                rest:parseInt(exer.restM)*60+parseInt(exer.restS)
+                rest:parseInt(exer.restM)*60+parseInt(exer.restS),
+                userId:0,
+                visible:1
             })
             .then((res) => {
-              if(res.data="success"){
+                console.log(res);
+              if(res.data==="success"){
                 this.setState({success:true});
               }
               else this.setState({success:false});
@@ -124,46 +130,66 @@ class PostWorkout extends React.Component<{}, {success:boolean, submitted: boole
 
   render(){
     return (
-        <div className="form-group">
+        <div className="form-group post-form">
+            {this.state.blankWName && 
+            <div className="alert alert-danger">
+                Blank workout name!</div>}
+            {!this.state.success && 
             <form >
+            
                 <label>
                     Workout Name
-                    <input className="form-control" type='text' value={this.state.workoutName} onChange={this.handleWNChange} />
+                    <input placeholder="Enter workout name here" className="form-control" type='text' value={this.state.workoutName} onChange={this.handleWNChange} />
                 </label>
                 <br/>
-                
-                <button onClick={this.addExercise} >Add exercise</button>
-                <br/>
-                {
-                    this.state.exercises.map((val, idx)=>{
-                        return(
-                            <div key={idx}>
-                                <label>
-                                    Exercise name
-                                    <input className="form-control" type="text" value={val.name} onChange={ (e) =>this.handleExNameChange(e,idx)}/>
-                                </label>
-                                <br/>
-                                <label>
-                                    Exercise length
-                                    <input  type="text" value={val.lengthM} onChange={ (e) =>this.handleExLengthMChange(e,idx)}/> :
-                                    <input  type="text" value={val.lengthS} onChange={ (e) =>this.handleExLengthSChange(e,idx)}/>
-                                </label>
-                                <br/>
-                                <label>
-                                    Exercise rest
-                                    <input  type="text" value={val.restM} onChange={ (e) =>this.handleExRestMChange(e,idx)}/> :
-                                    <input  type="text" value={val.restS} onChange={ (e) =>this.handleExRestSChange(e,idx)}/>
-                                </label>
-                            </div>
-                        )
-                    })
-                }  
-                <br/>
-                <button onClick={this.removeExercise} >Remove exercise</button>
-                <br/>
-                <br/>
-                <button className="btn btn-primary" onClick={this.handleSubmit}> Submit workout!</button>
-            </form>
+                <div className="post-form-contents">
+                    <button className="btn btn-success add-btn" onClick={this.addExercise} >Add exercise</button>
+                    <br/>
+                    {
+                        this.state.exercises.map((val, idx)=>{
+                            return(
+                                <div key={idx}>
+                                    <label>
+                                        Exercise name
+                                        <input className="form-control" type="text" value={val.name} onChange={ (e) =>this.handleExNameChange(e,idx)}/>
+                                    </label>
+                                    <br/>
+                                    {(this.state.exercises[idx].lengthM.length>0 && this.state.exercises[idx].lengthS.length>0) && (this.state.exercises[idx].lengthM.match(/^[0-9]+$/) === null || this.state.exercises[idx].lengthS.match(/^[0-9]+$/) === null) && 
+                                    <div className="alert alert-danger">
+                                        Please enter a number for minutes and seconds!
+                                    </div>}
+                                    <label>
+                                        Exercise length
+                                    </label>
+                                    <input className="time-input" placeholder="Minutes"  type="text" value={val.lengthM} onChange={ (e) =>this.handleExLengthMChange(e,idx)}/> :
+                                    <input className="time-input" placeholder="Seconds" type="text" value={val.lengthS} onChange={ (e) =>this.handleExLengthSChange(e,idx)}/>
+                                    
+                                    <br/>
+                                    {(this.state.exercises[idx].restM.length>0 && this.state.exercises[idx].restS.length>0) && (this.state.exercises[idx].restM.match(/^[0-9]+$/) === null || this.state.exercises[idx].restS.match(/^[0-9]+$/) === null) && 
+                                    <div className="alert alert-danger">
+                                        Please enter a number for minutes and seconds!
+                                    </div>}
+                                    <label>
+                                        Exercise rest
+                                        </label>
+                                    <input className="time-input" placeholder="Minutes" type="text" value={val.restM} onChange={ (e) =>this.handleExRestMChange(e,idx)}/> :
+                                    <input className="time-input" placeholder="Seconds"  type="text" value={val.restS} onChange={ (e) =>this.handleExRestSChange(e,idx)}/>
+                                   
+                                </div>
+                            )
+                        })
+                    }  
+                    <br/>
+                    {this.state.exercises.length>0 && <button className="btn btn-danger" onClick={this.removeExercise} >Remove exercise</button>}
+                    <br/>
+                    <br/>
+                    {this.state.exercises.length>0 && <button className="btn btn-primary" onClick={this.handleSubmit}> Submit workout!</button>}
+                </div>
+            </form>}
+            {this.state.success && 
+            <div className="alert alert-success">
+                Submitted! Enjoy your workout!
+                </div>}
         </div>
       )
   }

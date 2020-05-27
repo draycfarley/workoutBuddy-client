@@ -36,3 +36,26 @@
     transform: rotate(360deg);
   }
 }
+
+.post-form{
+  width:20%;
+  margin:auto;
+}
+
+.post-form-contents{
+  width:70%;
+  margin:auto;
+}
+
+.add-btn{
+  width:65%;
+  margin:auto;
+}
+
+.time-input{
+  width:40%;
+}
+
+label{
+  display:block;
+}
