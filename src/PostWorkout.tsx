@@ -124,7 +124,7 @@ class PostWorkout extends React.Component<{}, {success:boolean, submitted: boole
     removeExercise(e: React.MouseEvent<HTMLButtonElement>){
         e.preventDefault();
         this.setState((prevState)=>({
-            exercises:prevState.exercises.splice(-1,1)
+            exercises: prevState.exercises.length > 1 ? prevState.exercises.splice(-1,1) :[]
         }));
     }
 
