@@ -34,7 +34,12 @@ class ViewAllWorkouts extends React.Component<{},{isAuth:boolean, workouts:Array
 
     componentDidMount(){
         axios.post('https://workout-buddy-server2020.herokuapp.com/workouts/getByUserId', {
-                userId:0
+                workoutName:"",
+                name:"",
+                length:0,
+                rest:0,
+                userId:0,
+                visible:1
             })
             .then((res) => {
                 console.log(res);
