@@ -15,7 +15,7 @@ class Main extends React.Component{
         <Route exact path='/' component={Home}/>
         <Route exact path='/create' component={PostWorkout}/>
         <Route exact path='/view' component={ViewAllWorkouts}/>
-        <Route exact path='/view:workoutName' component={ViewWorkout}/>
+        <Route exact path='/view/:workoutName' component={ViewWorkout}/>
       </Switch>
       
       )
