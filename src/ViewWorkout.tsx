@@ -60,7 +60,11 @@ class ViewWorkout extends React.Component<MatchProps,{isAuth:boolean, exercises:
                 setTimeout(
                     ()=>window.speechSynthesis.speak(new SpeechSynthesisUtterance('Starting '+exer.name+" for "+exer.lengthM+" minutes and "+exer.lengthS+" seconds")),
                     time);
-                    time+=1000*parseInt(exer.lengthS) + 60*1000*parseInt(exer.lengthM);
+                    let duration=1000*parseInt(exer.lengthS) + 60*1000*parseInt(exer.lengthM);
+                setTimeout(
+                    ()=>window.speechSynthesis.speak(new SpeechSynthesisUtterance("Half way")),
+                    time+duration/2);
+                time+=duration;
                 setTimeout(
                     ()=>window.speechSynthesis.speak(new SpeechSynthesisUtterance('Rest for '+exer.restM+" minutes and "+exer.restS+" seconds")),
                     time);
