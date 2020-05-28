@@ -7,7 +7,7 @@ class Home extends React.Component{
     render(){
       return (
           <div>
-              Hello!
+              Click "Create" to enter your workout and "View All Workouts" to see when you're done!
           </div>
         
         )

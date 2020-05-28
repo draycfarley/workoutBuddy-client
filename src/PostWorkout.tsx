@@ -57,7 +57,7 @@ class PostWorkout extends React.Component<{}, {success:boolean, submitted: boole
             })
             .then((res) => {
                 console.log(res);
-              if(res.data==="success"){
+              if(res.data==="Saved"){
                 this.setState({success:true});
               }
               else{
@@ -195,6 +195,7 @@ class PostWorkout extends React.Component<{}, {success:boolean, submitted: boole
             {!this.state.success && this.state.reusedName && 
             <div className="alert alert-danger">
                 You've already created a workout with this name!!</div>}
+
         </div>
       )
   }
