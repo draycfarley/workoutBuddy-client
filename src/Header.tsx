@@ -13,6 +13,7 @@ class Header extends React.Component {
                     <div className="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul className="navbar-nav mr-auto">
                             <Link to='/create' className='"navbar-brand"'>Create</Link>
+                            <Link to='/view' className='"navbar-brand"'>View All Workouts</Link>
                         </ul>
                         
                     </div>

@@ -21,11 +21,11 @@ class exercise {
 
 }
 
-class PostWorkout extends React.Component<{}, {success:boolean, submitted: boolean, workoutName:string, exercises:Array<exercise>, blankEName:boolean, blankWName:boolean}>{
+class PostWorkout extends React.Component<{}, {success:boolean, submitted: boolean, workoutName:string, exercises:Array<exercise>, blankEName:boolean, blankWName:boolean, reusedName:boolean}>{
 
     constructor(props:any){
         super(props);
-        this.state={success: false, submitted:false, exercises:[], workoutName:"", blankEName:false, blankWName:false};
+        this.state={success: false, submitted:false, exercises:[], workoutName:"", blankEName:false, blankWName:false, reusedName:false};
         this.handleWNChange=this.handleWNChange.bind(this);
         this.addExercise=this.addExercise.bind(this);
         this.removeExercise=this.removeExercise.bind(this);
@@ -60,7 +60,9 @@ class PostWorkout extends React.Component<{}, {success:boolean, submitted: boole
               if(res.data==="success"){
                 this.setState({success:true});
               }
-              else this.setState({success:false});
+              else{
+                  this.setState({success:false, reusedName: res.data==="reused workoutName"})
+              }
             })
             .catch((error) => {
               console.log(error);
@@ -190,6 +192,9 @@ class PostWorkout extends React.Component<{}, {success:boolean, submitted: boole
             <div className="alert alert-success">
                 Submitted! Enjoy your workout!
                 </div>}
+            {!this.state.success && this.state.reusedName && 
+            <div className="alert alert-danger">
+                You've already created a workout with this name!!</div>}
         </div>
       )
   }
