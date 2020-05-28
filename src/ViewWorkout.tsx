@@ -1,7 +1,9 @@
 import React from 'react';
 import './App.css';
 import axios from "axios";
-import { Link, RouteComponentProps } from 'react-router-dom';
+import {RouteComponentProps } from 'react-router-dom';
+import { finished } from 'stream';
+
 
 interface MatchParams {
     workoutName: string;
@@ -31,6 +33,9 @@ class exercise {
 
 }
 
+function sleep(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
 class ViewWorkout extends React.Component<MatchProps,{isAuth:boolean, exercises:Array<exercise>}>{
  
@@ -38,6 +43,31 @@ class ViewWorkout extends React.Component<MatchProps,{isAuth:boolean, exercises:
         super(props);
         this.state={isAuth:false, exercises:[]};
         this.componentDidMount=this.componentDidMount.bind(this);
+        this.startWorkout=this.startWorkout.bind(this);
+    }
+
+    startWorkout(e: React.MouseEvent<HTMLButtonElement>){
+        let time=0;
+        window.speechSynthesis.speak(new SpeechSynthesisUtterance('Starting workout. The first exercise is'));
+        window.speechSynthesis.speak(new SpeechSynthesisUtterance(this.state.exercises[0].name));
+        time+=1000;
+        setTimeout(() =>window.speechSynthesis.speak(new SpeechSynthesisUtterance('three')), time);
+        time+=1000;
+        setTimeout(() =>window.speechSynthesis.speak(new SpeechSynthesisUtterance('two')), time);
+        time+=1000;
+        setTimeout(() =>window.speechSynthesis.speak(new SpeechSynthesisUtterance('one')), time);
+        this.state.exercises.forEach(exer =>{
+                setTimeout(
+                    ()=>window.speechSynthesis.speak(new SpeechSynthesisUtterance('Starting '+exer.name+" for "+exer.lengthM+" minutes and "+exer.lengthS+" seconds")),
+                    time);
+                    time+=1000*parseInt(exer.lengthS) + 60*1000*parseInt(exer.lengthM);
+                setTimeout(
+                    ()=>window.speechSynthesis.speak(new SpeechSynthesisUtterance('Rest for '+exer.restM+" minutes and "+exer.restS+" seconds")),
+                    time);
+                time+=1000*parseInt(exer.restS) + 60*1000*parseInt(exer.restM);
+        });
+
+        setTimeout(()=>window.speechSynthesis.speak(new SpeechSynthesisUtterance('You finished great job')), time);
     }
 
     componentDidMount(){
@@ -50,14 +80,16 @@ class ViewWorkout extends React.Component<MatchProps,{isAuth:boolean, exercises:
                 visible:1
             })
             .then((res) => {
-                console.log(res);
-                let exercises=[];
+                res.data.sort((a:any,b:any)=>{
+                    return a.id-b.id;
+                });
+                let exercises: Array<exercise>=[];
                 res.data.forEach((e:any) =>{
                     exercises.push(
-                        new exercise(e.name,( e.length/60).toString(), (e.length%60).toString(), ( e.rest/60).toString(), (e.rest%60).toString(), "")
+                        new exercise(e.name, Math.floor( e.length/60)+"", e.length%60+"", Math.floor(e.rest/60)+"", e.rest%60+"", "")
                         )
                 });
-              this.setState({isAuth:true, exercises:res.data});
+              this.setState({isAuth:true, exercises:exercises});
             })
             .catch((error) => {
               console.log(error);
@@ -69,18 +101,19 @@ class ViewWorkout extends React.Component<MatchProps,{isAuth:boolean, exercises:
     return (
         <div>
             <h1>
-                Click on a workout to get started
+                Press play to get started!
             </h1>
             <ul className="list-group">
                 {this.state.exercises.map((exer, idx)=>{
                     return(
                         <div>
-                            <li className="list-group-item">{exer.name} {exer.lengthM}:{exer.lengthM}</li>
-                            <li className="list-group-item">Rest {exer.restM}:{exer.restM}</li>
+                            <li className="list-group-item">{exer.name}, Duration: {exer.lengthM}:{exer.lengthS}</li>
+                            <li className="list-group-item">Rest {exer.restM}:{exer.restS}</li>
                         </div>
                     )
                 })}
             </ul>
+            <button className="btn btn-primary" onClick={this.startWorkout}>Start!</button>
         </div>
       
       )
